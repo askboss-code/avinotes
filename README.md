@@ -1,21 +1,18 @@
-# AviNotes v1
-A free, installable-web-app starter for iPad.
+# AviNotes Studio v2
+Upload these files to the root of your existing `avinotes` GitHub repository, replacing the previous versions.
 
-## Included
-- Typed notes
-- Finger/Apple Pencil drawing canvas (browser pointer events)
-- Pen colour and size, eraser, undo, clear
-- Local offline-capable storage using IndexedDB
-- Search, delete, JSON export/import backup
-- PWA manifest and service worker
+## New in v2
+- Pencil-only mode (ignores touch drawing by default)
+- Optional finger + Pencil mode
+- Ball pen, fountain-style pen, brush, pencil-style ink, highlighter and eraser
+- Stroke smoothing control
+- Optional pressure-based width where browser stylus events provide pressure
+- Ruled, grid, dotted and blank paper
+- Undo/redo, clear page, local autosave, search and JSON backup
+- Keeps the same IndexedDB database name and note store, so existing notes should remain available
 
-## Run
-For a quick local preview, open `index.html` in a browser. For installation/offline PWA support, host the folder on an HTTPS static host (for example GitHub Pages). On iPad Safari: Share -> Add to Home Screen.
+## Important iPad limitation
+This is a web app. It can ignore touch drawing while in Pencil-only mode, but cannot guarantee native iPadOS-level palm rejection. Pressure data and stylus identification depend on the iPad, stylus, Safari and browser event support. This app does not claim to reproduce native Goodnotes/CollaNote ink rendering.
 
-## Important storage note
-This first version saves on the current iPad/browser only. Export a JSON backup regularly. Cloud sync is intentionally not enabled yet: it needs a cloud project and sign-in/security setup. The next milestone is adding Supabase Auth + database + private per-user storage, with local-first sync. Never put a Supabase service-role key in frontend code; only use the anon/publishable key with Row Level Security policies.
-
-## iPad notes
-- Best drawing experience is with Apple Pencil, but finger input also works.
-- This is a web app, not a native App Store app.
-- Test pencil input and page behaviour on your iPad before relying on it for important notes.
+## Update GitHub
+Replace `index.html`, `manifest.webmanifest`, and `sw.js` in the existing repository root. Commit the changes. Then reload the website on iPad. If the old version persists, close the installed web app fully and reopen it; the service worker cache version has been bumped.
