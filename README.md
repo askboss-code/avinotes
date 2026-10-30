@@ -1,18 +1,20 @@
-# AviNotes Studio v2
-Upload these files to the root of your existing `avinotes` GitHub repository, replacing the previous versions.
+# AviNotes Studio v3
+Upload these files to the root of the existing `avinotes` GitHub repository, replacing previous versions.
 
-## New in v2
-- Pencil-only mode (ignores touch drawing by default)
-- Optional finger + Pencil mode
-- Ball pen, fountain-style pen, brush, pencil-style ink, highlighter and eraser
-- Stroke smoothing control
-- Optional pressure-based width where browser stylus events provide pressure
-- Ruled, grid, dotted and blank paper
-- Undo/redo, clear page, local autosave, search and JSON backup
-- Keeps the same IndexedDB database name and note store, so existing notes should remain available
+## Improvements
+- Active stylus mode: only Pointer Events reported as `pen` are accepted.
+- Universal/capacitive mode: accepts touch-like stylus events with optional contact-size filtering.
+- Finger writing mode.
+- Contact guard and adjustable maximum touch contact size.
+- Coalesced pointer-event samples for smoother strokes.
+- Adjustable smoothing and pen thickness.
+- Pressure-based width only when the browser reports a pen event and pressure is enabled.
+- Ball, fountain-style, brush, pencil-style, highlighter and eraser tools.
+- Ruled/grid/dotted/blank pages, undo/redo, local autosave, JSON backup.
+- Uses the same IndexedDB database and object store as v1/v2.
 
-## Important iPad limitation
-This is a web app. It can ignore touch drawing while in Pencil-only mode, but cannot guarantee native iPadOS-level palm rejection. Pressure data and stylus identification depend on the iPad, stylus, Safari and browser event support. This app does not claim to reproduce native Goodnotes/CollaNote ink rendering.
+## Stylus limitations
+Many passive capacitive styluses are reported by iPad Safari as `touch`, just like a finger. Choose Universal/capacitive mode for those. Contact-size filtering is heuristic and varies by browser/device; it cannot guarantee palm rejection. A true active stylus with iPadOS palm rejection and pen input support is recommended for reliable writing.
 
-## Update GitHub
-Replace `index.html`, `manifest.webmanifest`, and `sw.js` in the existing repository root. Commit the changes. Then reload the website on iPad. If the old version persists, close the installed web app fully and reopen it; the service worker cache version has been bumped.
+## Deploy update
+Replace `index.html`, `manifest.webmanifest`, and `sw.js` in the existing GitHub repository root. Commit changes. Reload the web app. If the old version remains, fully close the installed web app and reopen it, or reload Safari after a short wait.

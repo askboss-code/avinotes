@@ -1,101 +1,76 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17233b"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest"><title>AviNotes Studio</title>
 <style>
 :root{--bg:#f2f4f9;--paper:#fff;--ink:#202b40;--muted:#748097;--line:#e1e6ef;--accent:#526be0;--soft:#edf0ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px system-ui,-apple-system,BlinkMacSystemFont,sans-serif}
-header{background:#17233b;color:#fff;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5}
-.brand{font-size:22px;font-weight:800;letter-spacing:-.6px}.sub{font-size:11px;color:#b9c5da}
-button,select,input{font:inherit}button{border:0;border-radius:10px;padding:9px 12px;background:var(--accent);color:white;font-weight:650;cursor:pointer}
-button.secondary{background:var(--soft);color:#33469e}button.active{background:#263b91;color:white}button:disabled{opacity:.4}
-main{max-width:1250px;margin:auto;padding:14px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px}
-.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:13px;min-width:0}
-h2{font-size:16px;margin:0 0 11px}.muted{color:var(--muted);font-size:12px}
-.search,.title,textarea,select{border:1px solid var(--line);border-radius:10px;padding:10px;background:white;color:var(--ink)}
-.search{width:100%;margin-bottom:10px}.notes{display:flex;flex-direction:column;gap:6px;margin-top:9px}
-.note{background:#f7f8fc;color:var(--ink);text-align:left;border:1px solid transparent}.note.active{border-color:#9eacf5;background:#f0f2ff}.note strong,.note small{display:block}.note small{font-size:11px;color:var(--muted);font-weight:400}
-.editor-top{display:flex;gap:8px}.title{flex:1;min-width:0;font-size:16px;font-weight:650}
-textarea{width:100%;min-height:100px;margin-top:9px;resize:vertical;line-height:1.5}
-.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:10px 0}
-.tool{background:#f0f2f8;color:#28344b;border:1px solid #e1e5ef;padding:8px 10px;font-size:12px}
-.tool.active{background:#273d91;color:white;border-color:#273d91}
-.setting{display:flex;align-items:center;gap:6px;padding:5px 8px;background:#f7f8fb;border-radius:9px;font-size:12px;color:#4c5870}
-input[type=color]{width:27px;height:25px;border:0;background:transparent;padding:0}input[type=range]{width:82px}
-.toggle{display:flex;gap:7px;align-items:center;background:#eef1f8;border-radius:10px;padding:5px}
-.toggle button{padding:7px 9px;background:transparent;color:#4d5870;font-size:12px}.toggle button.active{background:#273d91;color:#fff}
-.stage{border:1px solid #dce2ec;border-radius:12px;overflow:auto;background:#dfe4ed;max-height:72vh;padding:12px;touch-action:pan-y}
-.sheet{position:relative;width:100%;max-width:850px;margin:auto;background:#fff;box-shadow:0 2px 10px #25324a18;min-height:720px;touch-action:pan-y}
-#pad{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y}
-.paper-lines{position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 30px,#d9e5f4 31px);background-position:0 13px}
-.paper-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#e4eaf2 1px,transparent 1px),linear-gradient(90deg,#e4eaf2 1px,transparent 1px);background-size:24px 24px}
-.paper-dots{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(#cbd5e3 1px,transparent 1px);background-size:18px 18px}
-.status{font-size:11px;color:var(--muted);margin-top:8px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
-.help{padding:9px 10px;background:#f5f7fc;border-radius:10px;color:#56627a;font-size:12px;line-height:1.45;margin-top:9px}
-@media(max-width:760px){main{grid-template-columns:1fr;padding:8px}.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:10px}.sheet{min-height:640px}.stage{max-height:68vh;padding:6px}header{padding:11px}}
-</style></head>
-<body>
-<header><div><div class="brand">✦ AviNotes Studio</div><div class="sub">A calmer space for handwritten study notes</div></div><button id="newBtn">＋ New note</button></header>
-<main>
-<aside class="panel"><h2>My notebooks</h2><input id="search" class="search" placeholder="Search notes…"><div class="muted">Saved on this device</div><div id="notes" class="notes"></div><div class="actions"><button class="secondary" id="exportBtn">Export backup</button><label class="tool" style="border-radius:10px;cursor:pointer">Import<input id="importFile" type="file" accept="application/json" hidden></label></div></aside>
-<section class="panel">
-<div id="editor">
-<div class="editor-top"><input id="noteTitle" class="title" placeholder="Untitled note"><button class="secondary" id="deleteBtn">Delete</button></div>
-<textarea id="noteText" placeholder="Type a note or use the writing page below…"></textarea>
-<div class="toolbar" aria-label="Writing tools">
-<button class="tool active" data-tool="ball">● Ball</button><button class="tool" data-tool="fountain">✒ Fountain</button><button class="tool" data-tool="brush">🖌 Brush</button><button class="tool" data-tool="pencil">✎ Pencil</button><button class="tool" data-tool="highlighter">▰ Highlight</button><button class="tool" data-tool="eraser">⌫ Eraser</button>
-</div>
-<div class="toolbar">
-<label class="setting">Colour <input id="color" type="color" value="#26344f"></label>
-<label class="setting">Size <input id="size" type="range" min="1" max="18" value="3"><span id="sizeVal">3</span></label>
-<label class="setting">Stabilize <input id="smooth" type="range" min="0" max="10" value="5"><span id="smoothVal">5</span></label>
-<label class="setting">Pressure <input id="pressure" type="checkbox" checked></label>
-</div>
-<div class="toolbar">
-<div class="toggle"><button id="stylusOnly" class="active">✎ Pencil only</button><button id="fingerMode">☝ Finger + Pencil</button></div>
-<label class="setting">Paper <select id="paper"><option value="blank">Blank</option><option value="lined" selected>Ruled</option><option value="grid">Grid</option><option value="dots">Dotted</option></select></label>
-<button class="tool" id="undo">↶ Undo</button><button class="tool" id="redo">↷ Redo</button><button class="tool" id="clear">Clear page</button>
-</div>
+header{background:#17233b;color:#fff;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5}.brand{font-size:22px;font-weight:800}.sub{font-size:11px;color:#b9c5da}
+button,select,input{font:inherit}button{border:0;border-radius:10px;padding:9px 12px;background:var(--accent);color:white;font-weight:650;cursor:pointer}button.secondary{background:var(--soft);color:#33469e}button.active{background:#263b91;color:white}
+main{max-width:1250px;margin:auto;padding:14px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:14px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:13px;min-width:0}
+h2{font-size:16px;margin:0 0 11px}.muted{color:var(--muted);font-size:12px}.search,.title,textarea,select{border:1px solid var(--line);border-radius:10px;padding:10px;background:white;color:var(--ink)}.search{width:100%;margin-bottom:10px}
+.notes{display:flex;flex-direction:column;gap:6px;margin-top:9px}.note{background:#f7f8fc;color:var(--ink);text-align:left;border:1px solid transparent}.note.active{border-color:#9eacf5;background:#f0f2ff}.note strong,.note small{display:block}.note small{font-size:11px;color:var(--muted);font-weight:400}
+.editor-top{display:flex;gap:8px}.title{flex:1;min-width:0;font-size:16px;font-weight:650}textarea{width:100%;min-height:85px;margin-top:9px;resize:vertical;line-height:1.5}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:9px 0}.tool{background:#f0f2f8;color:#28344b;border:1px solid #e1e5ef;padding:8px 10px;font-size:12px}.tool.active{background:#273d91;color:white;border-color:#273d91}
+.setting{display:flex;align-items:center;gap:6px;padding:5px 8px;background:#f7f8fb;border-radius:9px;font-size:12px;color:#4c5870}input[type=color]{width:27px;height:25px;border:0;background:transparent;padding:0}input[type=range]{width:75px}
+.modebar{display:flex;gap:6px;flex-wrap:wrap}.modebar button{background:#eef1f8;color:#4d5870;font-size:12px}.modebar button.active{background:#273d91;color:#fff}
+.stage{border:1px solid #dce2ec;border-radius:12px;overflow:auto;background:#dfe4ed;max-height:68vh;padding:10px;touch-action:pan-y}
+.sheet{position:relative;width:100%;max-width:850px;margin:auto;background:#fff;min-height:720px;box-shadow:0 2px 10px #25324a18;touch-action:pan-y}
+#pad{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y; -webkit-user-select:none;user-select:none}
+.paper-lines,.paper-grid,.paper-dots{position:absolute;inset:0;pointer-events:none}.paper-lines{background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 30px,#d9e5f4 31px);background-position:0 13px}.paper-grid{background-image:linear-gradient(#e4eaf2 1px,transparent 1px),linear-gradient(90deg,#e4eaf2 1px,transparent 1px);background-size:24px 24px}.paper-dots{background-image:radial-gradient(#cbd5e3 1px,transparent 1px);background-size:18px 18px}
+.status{font-size:11px;color:var(--muted);margin-top:8px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.help{padding:10px;background:#f5f7fc;border-radius:10px;color:#56627a;font-size:12px;line-height:1.5;margin-top:9px}.warn{color:#8a4b12;background:#fff6e9}
+@media(max-width:760px){main{grid-template-columns:1fr;padding:8px}.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:10px}.sheet{min-height:640px}.stage{max-height:65vh;padding:6px}header{padding:11px}}
+</style></head><body>
+<header><div><div class="brand">✦ AviNotes Studio</div><div class="sub">Universal stylus writing · Your study space</div></div><button id="newBtn">＋ New note</button></header>
+<main><aside class="panel"><h2>My notebooks</h2><input id="search" class="search" placeholder="Search notes…"><div class="muted">Saved on this device</div><div id="notes" class="notes"></div><div class="actions"><button class="secondary" id="exportBtn">Export backup</button><label class="tool" style="border-radius:10px;cursor:pointer">Import<input id="importFile" type="file" accept="application/json" hidden></label></div></aside>
+<section class="panel"><div id="editor">
+<div class="editor-top"><input id="noteTitle" class="title" placeholder="Untitled note"><button class="secondary" id="deleteBtn">Delete</button></div><textarea id="noteText" placeholder="Type notes here…"></textarea>
+<h2 style="margin-top:13px">Writing tools</h2>
+<div class="toolbar"><button class="tool active" data-tool="ball">● Ball pen</button><button class="tool" data-tool="fountain">✒ Fountain</button><button class="tool" data-tool="brush">🖌 Brush</button><button class="tool" data-tool="pencil">✎ Pencil</button><button class="tool" data-tool="highlighter">▰ Highlighter</button><button class="tool" data-tool="eraser">⌫ Eraser</button></div>
+<div class="toolbar"><label class="setting">Colour <input id="color" type="color" value="#26344f"></label><label class="setting">Size <input id="size" type="range" min="1" max="18" value="3"><span id="sizeVal">3</span></label><label class="setting">Smoothing <input id="smooth" type="range" min="0" max="10" value="7"><span id="smoothVal">7</span></label><label class="setting">Pressure <input id="pressure" type="checkbox"></label></div>
+<h2 style="margin-top:13px">Input mode</h2>
+<div class="modebar"><button id="autoMode" class="active">✎ Active stylus</button><button id="capMode">Universal / capacitive</button><button id="fingerMode">Finger writing</button></div>
+<div class="toolbar"><label class="setting">Contact guard <input id="contactGuard" type="checkbox" checked></label><label class="setting">Max touch size <input id="contactSize" type="range" min="8" max="40" value="22"><span id="contactVal">22</span>px</label><label class="setting">Paper <select id="paper"><option value="blank">Blank</option><option value="lined" selected>Ruled</option><option value="grid">Grid</option><option value="dots">Dotted</option></select></label></div>
+<div class="toolbar"><button class="tool" id="undo">↶ Undo</button><button class="tool" id="redo">↷ Redo</button><button class="tool" id="clear">Clear page</button></div>
 <div class="stage"><div class="sheet" id="sheet"><div id="paperLayer" class="paper-lines"></div><canvas id="pad"></canvas></div></div>
-<div class="help" id="inputHelp">Pencil-only mode is on: finger touches are ignored on the writing surface. Use your finger to scroll outside the page. Actual palm rejection depends on iPadOS, browser and stylus hardware.</div>
-<div class="status" id="status">Ready · Auto-save is on for this device.</div>
-<div class="actions"><button id="saveBtn">Save note</button><button class="secondary" id="newPage">New blank note</button></div>
-</div>
-<div id="empty" hidden style="padding:40px;text-align:center"><h2>Welcome to AviNotes</h2><p class="muted">Create your first notebook page.</p><button id="firstBtn">＋ Create note</button></div>
-</section></main>
+<div class="help" id="inputHelp">Active stylus mode: only browser events identified as a pen can write. If your rechargeable stylus is passive/capacitive and acts like a finger, switch to Universal / capacitive mode.</div>
+<div class="help warn">Palm-rejection note: on a passive capacitive stylus, iPad Safari may report both stylus and finger/palm as touch. Contact-size filtering can reduce broad touches but cannot guarantee perfect palm rejection. For best results use a stylus that supports iPad palm rejection or an active stylus recognized as a pen.</div>
+<div class="status" id="status">Ready · Auto-save is on for this device.</div><div class="actions"><button id="saveBtn">Save note</button><button class="secondary" id="newPage">New blank note</button></div>
+</div><div id="empty" hidden style="padding:40px;text-align:center"><h2>Welcome to AviNotes</h2><p class="muted">Create your first notebook page.</p><button id="firstBtn">＋ Create note</button></div></section></main>
 <script>
-const DB='avinotes_db',STORE='notes';let db,current=null,tool='ball',stylusOnly=true,drawing=false,last=null,undoStack=[],redoStack=[],activePointer=null;
+const DB='avinotes_db',STORE='notes';let db,current=null,tool='ball',mode='auto',drawing=false,last=null,undoStack=[],redoStack=[],activePointer=null,activeType=null,points=[];
 const $=id=>document.getElementById(id),canvas=$('pad'),ctx=canvas.getContext('2d',{alpha:true});
 function openDB(){return new Promise((ok,no)=>{let r=indexedDB.open(DB,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE,{keyPath:'id'});r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 function all(){return new Promise((ok,no)=>{let r=db.transaction(STORE).objectStore(STORE).getAll();r.onsuccess=()=>ok(r.result.sort((a,b)=>b.updated-a.updated));r.onerror=()=>no(r.error)})}
 function put(n){return new Promise((ok,no)=>{let t=db.transaction(STORE,'readwrite');t.objectStore(STORE).put(n);t.oncomplete=ok;t.onerror=()=>no(t.error)})}
 function del(id){return new Promise(ok=>{let t=db.transaction(STORE,'readwrite');t.objectStore(STORE).delete(id);t.oncomplete=ok})}
-function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function snapshot(){undoStack.push(canvas.toDataURL());if(undoStack.length>30)undoStack.shift();redoStack=[]}
-function redrawFrom(url){let im=new Image();im.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(im,0,0,canvas.clientWidth,canvas.clientHeight)};im.src=url}
-function resize(){let old=current?.drawing;let dpr=Math.max(1,devicePixelRatio||1),w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap='round';ctx.lineJoin='round';if(old)redrawFrom(old)}
-function paperStyle(){let p=$('paper').value,el=$('paperLayer');el.className=p==='blank'?'':p==='lined'?'paper-lines':p==='grid'?'paper-grid':'paper-dots'}
-function point(e){let r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top,p:e.pressure||.5}}
-function widthFor(p){let base=+$('size').value,pressure=$('pressure').checked?p:0.5;if(tool==='brush')return base*(0.35+pressure*1.8);if(tool==='fountain')return base*(0.65+pressure*1.0);if(tool==='pencil')return base*.8;return base}
-function begin(e){if(stylusOnly&&e.pointerType!=='pen')return;if(!stylusOnly&&e.pointerType==='touch'&&e.isPrimary===false)return;e.preventDefault();canvas.setPointerCapture(e.pointerId);activePointer=e.pointerId;snapshot();drawing=true;last=point(e);ctx.beginPath();ctx.moveTo(last.x,last.y);applyStyle(last.p);ctx.lineTo(last.x+.01,last.y+.01);ctx.stroke()}
-function applyStyle(p){ctx.globalCompositeOperation=tool==='eraser'?'destination-out':'source-over';ctx.strokeStyle=tool==='highlighter'?'rgba(255,220,55,.34)':$('color').value;ctx.globalAlpha=tool==='pencil'?.58:1;ctx.lineWidth=tool==='eraser'?Math.max(12,+$('size').value*4):tool==='highlighter'?Math.max(10,+$('size').value*3):widthFor(p);if(tool==='brush')ctx.lineCap='round';}
-function move(e){if(!drawing||e.pointerId!==activePointer)return;e.preventDefault();let p=point(e),s=+$('smooth').value/10,mid={x:(last.x+p.x)/2,y:(last.y+p.y)/2};applyStyle(p.p);ctx.quadraticCurveTo(last.x+(p.x-last.x)*(1-s*.55),last.y+(p.y-last.y)*(1-s*.55),mid.x,mid.y);ctx.stroke();last=p}
-async function finish(e){if(!drawing||e.pointerId!==activePointer)return;drawing=false;activePointer=null;ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';await save()}
-canvas.addEventListener('pointerdown',begin);canvas.addEventListener('pointermove',move);['pointerup','pointercancel','lostpointercapture'].forEach(x=>canvas.addEventListener(x,finish));
+function redraw(url){let im=new Image();im.onload=()=>{ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(im,0,0,canvas.clientWidth,canvas.clientHeight)};im.src=url}
+function resize(){let old=current?.drawing,dpr=Math.max(1,devicePixelRatio||1),w=canvas.clientWidth,h=canvas.clientHeight;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.lineCap='round';ctx.lineJoin='round';if(old)redraw(old)}
+function paperStyle(){let p=$('paper').value;$('paperLayer').className=p==='blank'?'':p==='lined'?'paper-lines':p==='grid'?'paper-grid':'paper-dots'}
+function setMode(m){mode=m;['autoMode','capMode','fingerMode'].forEach((id,i)=>$(id).classList.toggle('active',['auto','capacitive','finger'][i]===m));$('inputHelp').textContent=m==='auto'?'Active stylus mode: only events identified by Safari as a pen can write. If your stylus acts like a finger, use Universal / capacitive mode.':m==='capacitive'?'Universal mode: touch-like stylus input is accepted. Contact-size guard tries to ignore broad palm/finger contacts; this is a best-effort filter, not true hardware palm rejection.':'Finger writing mode: finger and stylus touch events can draw. Accidental palm marks may occur.'}
+function accepted(e){if(mode==='auto')return e.pointerType==='pen';if(e.pointerType==='pen')return true;if(e.pointerType!=='touch')return false;if(mode==='finger')return true;
+ if($('contactGuard').checked){let max=+$('contactSize').value,w=e.width||0,h=e.height||0;if((w>0&&w>max)||(h>0&&h>max))return false;}return true}
+function pos(e){let r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top,p:e.pressure||.5}}
+function lineWidth(p){let base=+$('size').value;let usePressure=$('pressure').checked&&activeType==='pen';let k=usePressure?p:.5;if(tool==='brush')return base*(.65+k*1.5);if(tool==='fountain')return base*(.8+k*.8);if(tool==='pencil')return base*.8;return base}
+function style(p){ctx.globalCompositeOperation=tool==='eraser'?'destination-out':'source-over';ctx.globalAlpha=tool==='pencil'?.5:1;ctx.strokeStyle=tool==='highlighter'?'rgba(255,218,55,.32)':$('color').value;ctx.lineWidth=tool==='eraser'?Math.max(14,+$('size').value*4):tool==='highlighter'?Math.max(10,+$('size').value*3):lineWidth(p)}
+function down(e){if(!accepted(e))return;if(drawing)return;e.preventDefault();try{canvas.setPointerCapture(e.pointerId)}catch{}activePointer=e.pointerId;activeType=e.pointerType;drawing=true;snapshot();last=pos(e);points=[last];style(last.p);ctx.beginPath();ctx.moveTo(last.x,last.y)}
+function smoothTo(p){let s=+$('smooth').value/10;let mid={x:(last.x+p.x)/2,y:(last.y+p.y)/2};style(p.p);ctx.quadraticCurveTo(last.x+(p.x-last.x)*(1-s*.5),last.y+(p.y-last.y)*(1-s*.5),mid.x,mid.y);ctx.stroke();last=p}
+function move(e){if(!drawing||e.pointerId!==activePointer)return;e.preventDefault();let batch=[];if(e.getCoalescedEvents){try{batch=e.getCoalescedEvents()}catch{}}if(!batch.length)batch=[e];for(let ev of batch){let p=pos(ev);smoothTo(p)}}
+async function finish(e){if(!drawing||e.pointerId!==activePointer)return;let p=pos(e);smoothTo(p);drawing=false;activePointer=null;activeType=null;ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';await save()}
+canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);['pointerup','pointercancel','lostpointercapture'].forEach(n=>canvas.addEventListener(n,finish));
 function setTool(t){tool=t;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===t))}
 document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
-$('stylusOnly').onclick=()=>{stylusOnly=true;$('stylusOnly').classList.add('active');$('fingerMode').classList.remove('active');$('inputHelp').textContent='Pencil-only mode: finger touches are ignored on the writing surface. Use finger to scroll outside the page. Palm rejection still depends on iPadOS and stylus hardware.'};
-$('fingerMode').onclick=()=>{stylusOnly=false;$('fingerMode').classList.add('active');$('stylusOnly').classList.remove('active');$('inputHelp').textContent='Finger + Pencil mode: both can draw. Switch back to Pencil only to avoid accidental palm marks.'};
-$('size').oninput=()=> $('sizeVal').textContent=$('size').value;$('smooth').oninput=()=> $('smoothVal').textContent=$('smooth').value;$('paper').onchange=paperStyle;
-async function save(){if(!current)current={id:id(),created:Date.now()};current.title=$('noteTitle').value.trim()||'Untitled note';current.text=$('noteText').value;current.drawing=canvas.toDataURL('image/png');current.paper=$('paper').value;current.updated=Date.now();await put(current);$('status').textContent='Saved on this device · '+new Date().toLocaleTimeString();await refresh()}
+$('autoMode').onclick=()=>setMode('auto');$('capMode').onclick=()=>setMode('capacitive');$('fingerMode').onclick=()=>setMode('finger');
+$('size').oninput=()=> $('sizeVal').textContent=$('size').value;$('smooth').oninput=()=> $('smoothVal').textContent=$('smooth').value;$('contactSize').oninput=()=> $('contactVal').textContent=$('contactSize').value;$('paper').onchange=paperStyle;
+async function save(){if(!current)current={id:uid(),created:Date.now()};current.title=$('noteTitle').value.trim()||'Untitled note';current.text=$('noteText').value;current.drawing=canvas.toDataURL('image/png');current.paper=$('paper').value;current.updated=Date.now();await put(current);$('status').textContent='Saved on this device · '+new Date().toLocaleTimeString();await refresh()}
 async function refresh(){let items=await all(),q=$('search').value.toLowerCase();$('notes').innerHTML='';items.filter(n=>(n.title+' '+n.text).toLowerCase().includes(q)).forEach(n=>{let b=document.createElement('button');b.className='note'+(current?.id===n.id?' active':'');let s=document.createElement('strong'),sm=document.createElement('small');s.textContent=n.title||'Untitled note';sm.textContent=new Date(n.updated).toLocaleDateString();b.append(s,sm);b.onclick=()=>load(n);$('notes').append(b)});$('empty').hidden=items.length>0||!!current;$('editor').hidden=items.length===0&&!current}
 async function load(n){current=n;$('noteTitle').value=n.title||'';$('noteText').value=n.text||'';$('paper').value=n.paper||'lined';paperStyle();undoStack=[];redoStack=[];resize();await refresh()}
-function create(){current={id:id(),created:Date.now()};$('noteTitle').value='';$('noteText').value='';ctx.clearRect(0,0,canvas.width,canvas.height);undoStack=[];redoStack=[];$('editor').hidden=false;$('empty').hidden=true;refresh()}
+function create(){current={id:uid(),created:Date.now()};$('noteTitle').value='';$('noteText').value='';ctx.clearRect(0,0,canvas.width,canvas.height);undoStack=[];redoStack=[];$('editor').hidden=false;$('empty').hidden=true;refresh()}
 $('newBtn').onclick=create;$('firstBtn').onclick=create;$('newPage').onclick=create;$('saveBtn').onclick=save;$('search').oninput=refresh;
-$('undo').onclick=()=>{if(!undoStack.length)return;redoStack.push(canvas.toDataURL());redrawFrom(undoStack.pop());save()};
-$('redo').onclick=()=>{if(!redoStack.length)return;undoStack.push(canvas.toDataURL());redrawFrom(redoStack.pop());save()};
+$('undo').onclick=()=>{if(!undoStack.length)return;redoStack.push(canvas.toDataURL());redraw(undoStack.pop());save()};$('redo').onclick=()=>{if(!redoStack.length)return;undoStack.push(canvas.toDataURL());redraw(redoStack.pop());save()};
 $('clear').onclick=()=>{snapshot();ctx.clearRect(0,0,canvas.width,canvas.height);save()};
 $('deleteBtn').onclick=async()=>{if(current&&confirm('Delete this note?')){await del(current.id);current=null;create();refresh()}};
 $('exportBtn').onclick=async()=>{let blob=new Blob([JSON.stringify(await all())],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='avinotes-backup.json';a.click();URL.revokeObjectURL(a.href)};
