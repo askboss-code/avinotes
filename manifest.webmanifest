@@ -1,0 +1,9 @@
+{
+  "name": "AviNotes",
+  "short_name": "AviNotes",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#18233b",
+  "description": "Personal study notes and handwriting"
+}
